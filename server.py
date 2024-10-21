@@ -1,9 +1,9 @@
 """
 This module implements a Flask web application for emotion detection from text.
 """
-
-from flask import Flask, render_template, request, jsonify
 import logging
+from flask import Flask, render_template, request, jsonify
+
 from EmotionDetection.emotion_detection import emotion_detection
 
 app = Flask("Emotion Detector")
@@ -40,7 +40,11 @@ def emotion_analyzer():
             }), 400
 
         # Extract emotion scores
-        emotions = {key: response.get(key) for key in ['anger', 'disgust', 'fear', 'joy', 'sadness']}
+        emotions = {key: response.get(key) for key in ['anger',
+                                                        'disgust',
+                                                          'fear',
+                                                            'joy',
+                                                              'sadness']}
         dominant_emotion = response.get('dominant_emotion')
 
         if dominant_emotion is None:
