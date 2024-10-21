@@ -6,7 +6,7 @@ app = Flask("Emotion Detector")
 
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route("/emotionDetection")
+@app.route("/emotionDetector")
 def emotion_analyzer():
     text_to_analyze = request.args.get('textToAnalyze')
     if not text_to_analyze:
