@@ -10,13 +10,8 @@ def emotion_detection(text_to_analyse):
     # Parse the response from the API
     formatted_response = json.loads(response.text)
     if response.status_code == 200:
-        # Extraer las emociones del primer resultado
         emotions = formatted_response['emotionPredictions'][0]['emotion']
-        
-        # Determinar la emoción dominante
         dominant_emotion = max(emotions, key=emotions.get)
-        
-        # Construir el diccionario con el formato solicitado
         result = {
             'anger': emotions.get('anger', 0.0),
             'disgust': emotions.get('disgust', 0.0),
@@ -26,7 +21,6 @@ def emotion_detection(text_to_analyse):
             'dominant_emotion': dominant_emotion
         }
     else:
-        # En caso de error, devolver valores nulos
         result = {
             'anger': None,
             'disgust': None,
@@ -35,6 +29,5 @@ def emotion_detection(text_to_analyse):
             'sadness': None,
             'dominant_emotion': None
         }
-
     return result
     
