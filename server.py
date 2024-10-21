@@ -1,6 +1,10 @@
+"""
+This module implements a Flask web application for emotion detection from text.
+"""
+
 from flask import Flask, render_template, request, jsonify
-from EmotionDetection.emotion_detection import emotion_detection
 import logging
+from EmotionDetection.emotion_detection import emotion_detection
 
 app = Flask("Emotion Detector")
 
@@ -9,6 +13,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.route("/emotionDetector")
 def emotion_analyzer():
+    """
+    Analyze the emotions from the provided text.
+
+    Returns:
+        A JSON response containing the detected emotions or an error message.
+    """
     # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
     if not text_to_analyze:
@@ -50,7 +60,12 @@ def emotion_analyzer():
 
 @app.route("/")
 def render_index_page():
-    # Render the main application page
+    """
+    Render the main application page.
+
+    Returns:
+        The rendered HTML for the index page.
+    """
     return render_template('index.html')
 
 if __name__ == "__main__":
