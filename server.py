@@ -4,40 +4,36 @@ import logging
 
 app = Flask("Emotion Detector")
 
-# Configuración del logger para depuración
+# Configurar el logger para depuración
 logging.basicConfig(level=logging.DEBUG)
 
 @app.route("/emotionDetector")
 def emotion_analyzer():
-    # Recuperar el texto desde los argumentos de la solicitud
     text_to_analyze = request.args.get('textToAnalyze')
 
-    # Verificar si el texto proporcionado es válido
+    # Verificar si se proporciona texto
     if not text_to_analyze:
         app.logger.error("No se proporcionó texto para analizar.")
         return "Invalid input! Please provide some text.", 400
 
     try:
-        # Llamar a la función emotion_detection y loggear la respuesta
+        # Llamar a la función emotion_detection y registrar la respuesta
         response = emotion_detection(text_to_analyze)
         app.logger.debug(f"Respuesta de la API: {response}")
 
-        # Verificar si la respuesta contiene 'emotionPredictions'
-        predictions = response.get('emotionPredictions')
-        if not predictions or not isinstance(predictions, list):
-            app.logger.error("La respuesta no contiene 'emotionPredictions'.")
-            return "Error: No emotions found in the response.", 500
+        # Extraer emociones y la emoción dominante de la respuesta
+        emotions = {key: response[key] for key in ['anger', 'disgust', 'fear', 'joy', 'sadness']}
+        dominant_emotion = response.get('dominant_emotion')
 
-        # Extraer emociones y emoción dominante
-        emotions = predictions[0].get('emotion', {})
-        if not emotions:
-            app.logger.error("No se encontraron emociones en la respuesta.")
-            return "Error: No emotions found in the response.", 500
+        # Verificar que haya emociones y una emoción dominante válida
+        if not emotions or not dominant_emotion:
+            app.logger.error("No se encontraron emociones o emoción dominante.")
+            return "Error: Invalid response from the API.", 500
 
-        dominant_emotion = max(emotions, key=emotions.get)
-
-        # Formatear la respuesta
+        # Formatear las emociones para mostrarlas
         emotions_str = ", ".join([f"{k}: {v:.2f}" for k, v in emotions.items()])
+
+        # Devolver la respuesta final
         return (
             f"The detected emotions are: {emotions_str}. "
             f"The dominant emotion is: {dominant_emotion}."
