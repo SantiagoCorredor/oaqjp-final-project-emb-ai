@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 def emotion_analyzer():
     text_to_analyze = request.args.get('textToAnalyze')
     if not text_to_analyze:
-        app.logger.error("No se proporcionó texto para analizar.")
+        app.logger.error("There is no text to analize.")
         return "Invalid input! Please provide some text.", 400
 
     try:
@@ -28,7 +28,7 @@ def emotion_analyzer():
         emotions = {key: response.get(key) for key in ['anger', 'disgust', 'fear', 'joy', 'sadness']}
         dominant_emotion = response.get('dominant_emotion')
         if dominant_emotion is None:
-            app.logger.error("La emoción dominante es None.")
+            app.logger.error("The dominant emotion is None.")
             return "Invalid text! Please try again!", 400
         emotions_str = ", ".join([f"{k}: {v:.2f}" for k, v in emotions.items()])
         return (
@@ -37,7 +37,7 @@ def emotion_analyzer():
         )
 
     except Exception as e:
-        app.logger.exception(f"Ocurrió un error: {str(e)}")
+        app.logger.exception(f"There is an error: {str(e)}")
         return f"An error occurred: {str(e)}", 500
 
 @app.route("/")
