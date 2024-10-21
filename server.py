@@ -58,9 +58,15 @@ def emotion_analyzer():
             f"The dominant emotion is: {dominant_emotion}."
         )
 
+    except requests.exceptions.RequestException as req_err:
+        app.logger.exception(f"A request error occurred: {str(req_err)}")
+        return jsonify({"error": f"A request error occurred: {str(req_err)}"}), 500
+    except KeyError as key_err:
+        app.logger.exception(f"A key error occurred: {str(key_err)}")
+        return jsonify({"error": "An error occurred while processing the response."}), 500
     except Exception as e:
-        app.logger.exception(f"An error occurred: {str(e)}")
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        app.logger.exception(f"An unexpected error occurred: {str(e)}")
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 @app.route("/")
 def render_index_page():
