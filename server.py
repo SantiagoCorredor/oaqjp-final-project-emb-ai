@@ -4,36 +4,33 @@ import logging
 
 app = Flask("Emotion Detector")
 
-# Configurar el logger para depuración
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route("/emotionDetector")
+@app.route("/emotionDetection")
 def emotion_analyzer():
     text_to_analyze = request.args.get('textToAnalyze')
-
-    # Verificar si se proporciona texto
     if not text_to_analyze:
         app.logger.error("No se proporcionó texto para analizar.")
         return "Invalid input! Please provide some text.", 400
 
     try:
-        # Llamar a la función emotion_detection y registrar la respuesta
         response = emotion_detection(text_to_analyze)
         app.logger.debug(f"Respuesta de la API: {response}")
-
-        # Extraer emociones y la emoción dominante de la respuesta
-        emotions = {key: response[key] for key in ['anger', 'disgust', 'fear', 'joy', 'sadness']}
+        if response.get('status_code') == 400:
+            return jsonify({
+                'anger': None,
+                'disgust': None,
+                'fear': None,
+                'joy': None,
+                'sadness': None,
+                'dominant_emotion': None
+            }), 400
+        emotions = {key: response.get(key) for key in ['anger', 'disgust', 'fear', 'joy', 'sadness']}
         dominant_emotion = response.get('dominant_emotion')
-
-        # Verificar que haya emociones y una emoción dominante válida
-        if not emotions or not dominant_emotion:
-            app.logger.error("No se encontraron emociones o emoción dominante.")
-            return "Error: Invalid response from the API.", 500
-
-        # Formatear las emociones para mostrarlas
+        if dominant_emotion is None:
+            app.logger.error("La emoción dominante es None.")
+            return "Invalid text! Please try again!", 400
         emotions_str = ", ".join([f"{k}: {v:.2f}" for k, v in emotions.items()])
-
-        # Devolver la respuesta final
         return (
             f"The detected emotions are: {emotions_str}. "
             f"The dominant emotion is: {dominant_emotion}."
